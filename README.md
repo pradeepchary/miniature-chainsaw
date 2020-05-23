@@ -1,1 +1,1 @@
-Where I am going Wrong?
+This is a direct commit, not the merge commit
