@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Package xmlns="http://soap.sforce.com/2006/04/metadata">
     <types>
-        <members>CompareMetaDataClassTest</members>
-        <members>DeleteMetaDataClassTest</members>
+        <members>SD_ClassDownloadAll</members>
+        <members>SD_ClassDownloadAllTest</members>
         <name>ApexClass</name>
+    </types>
+    <types>
+        <members>SD_CmpChild</members>
+        <members>SD_CmpDownloadAll</members>
+        <members>SD_CmpRelatedList</members>
+        <members>SD_CmpSelectTable</members>
+        <name>AuraDefinitionBundle</name>
     </types>
     <version>42.0</version>
 </Package>

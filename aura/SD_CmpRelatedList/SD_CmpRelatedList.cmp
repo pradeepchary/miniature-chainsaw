@@ -1,0 +1,106 @@
+<!--
+* 
+* @ Name 	:	SD_CmpRelatedList
+* @ Purpose : 	Component for displaying Download options in related list
+* @ Author	: 	Pradeep Chary
+*
+*   Date	        |  Developer Name               |  Version      |  Changes
+* ======================================================================================================
+*   18-04-2020      |  pradeep.chary@absyz.com		|  1.0          |  Initial Version
+*   
+-->
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,forceCommunity:availableForAllPageTypes" access="global" >
+    
+    <!-- Attributes to display details and actions -->
+    <aura:attribute name="title" type="String" default="Smart Download" description="Title for the related list" />
+    <aura:attribute name="iconName" type="String" default="standard:document" description="Related list icon" />
+    <aura:attribute name="buttonLabel" type="String" default="Download All" description="Button label" />
+    <aura:attribute name="buttonLabelv2" type="String" default="Select" description="Button label" />
+    <aura:attribute name="bDisabled" type="Boolean" default="true" description="Button disable check" />
+    <aura:attribute name="bEnableSelect" type="Boolean" default="true" description="To display Button 1" />
+    <aura:attribute name="bEnableDownloadAll" type="Boolean" default="true" description="To display Button 2" />
+    <aura:attribute name="bDirect" type="Boolean" default="false" description="Direct download option" />
+    <aura:attribute name="bEnableFilter" type="Boolean" default="true" description="Direct download option" />
+    
+    <!-- Attributes to store platform details -->
+    <aura:attribute name="stCommunity" type="String" />
+    
+    <!-- To toggle spinner -->
+    <aura:attribute name="bSpinner" type="Boolean" default="false" />
+    <aura:attribute name="bError" type="Boolean" default="false" />
+    
+    <!-- Page Markup -->
+    <article class="slds-card slds-card_boundary">
+        <!-- Page header -->
+        <lightning:layout horizontalAlign="spread" verticalAlign="center" class="slds-page-header" multipleRows="true">
+            
+            <lightning:layoutItem class="slds-show_medium">
+                <lightning:layout horizontalAlign="start" verticalAlign="center">
+                    <lightning:layoutItem>
+                        <!-- Page Icon -->
+                        <lightning:icon iconName="{!v.iconName}" alternativeText="{!v.title}" title="{!v.title}" size="small" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="horizontal-small">
+                        <!-- Page Title -->
+                        <h2 class="slds-card__header-link">
+                            <span class="slds-card__header-title slds-truncate" title="{!v.title}">{!v.title}</span>
+                        </h2>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:layoutItem>
+            
+            <lightning:layoutItem class="custom-align">
+                <!-- To display Spinner when loading -->
+                <aura:if isTrue="{!v.bSpinner}">
+                    <lightning:spinner alternativeText="Loading" size="small" variant="brand" class="custom-position" />
+                </aura:if>
+                <!-- Page Buttons -->
+                <lightning:buttonGroup>
+                    <aura:if isTrue="{!v.bError}">
+                        <lightning:icon iconName="utility:error" alternativeText="Error!" title="Error" variant="error" size="small" class="slds-p-right_small" />
+                    </aura:if>
+                    <aura:if isTrue="{!v.bEnableSelect}">
+                        <!-- Button 1 -->
+                        <lightning:button label="{!v.buttonLabelv2}" title="{!v.buttonLabelv2}" onclick="{! c.handleClickv3 }" disabled="{!v.bDisabled}" />
+                    </aura:if>
+                    <aura:if isTrue="{!v.bEnableDownloadAll}">
+                        <!-- Button 2 -->
+                        <lightning:button label="{!v.buttonLabel}" title="{!v.buttonLabel}" onclick="{! c.handleClick }" disabled="{!v.bDisabled}" />
+                    </aura:if>
+                </lightning:buttonGroup>
+            </lightning:layoutItem>
+        </lightning:layout>
+    </article>
+    
+    <!-- MODAL BOX Start --> 
+    <div aura:id="modal-id" class="slds-hide">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_large">
+            <div class="slds-modal__container">
+                <header class="custom-header">
+                    <!-- Button to close the Modal -->
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModal }"
+                                          alternativeText="Close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                </header>
+                <div>
+                    <!-- Main Table component to display the records to select and download -->
+                    <c:SD_CmpSelectTable recordId="{!v.recordId}" 
+                                         bDisabled="{!v.bDisabled}"
+                                         title="{!v.title}"
+                                         iconName="{!v.iconName}"
+                                         bDirect="{!v.bDirect}"
+                                         stCommunity="{!v.stCommunity}"
+                                         bSpinner="{!v.bSpinner}"
+                                         bError="{!v.bError}"
+                                         bEnableFilter="{!v.bEnableFilter}" />
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </div>
+    <!-- MODAL BOX Part END Here -->
+    
+</aura:component>

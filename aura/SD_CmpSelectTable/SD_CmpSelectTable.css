@@ -1,0 +1,67 @@
+.THIS.slds-theme_default {
+    border-radius: 0.25rem;
+}
+
+.THIS .slds-page-header {
+    height: 65px;
+}
+
+@media only screen and (max-width: 800px) {
+    .THIS .slds-page-header {
+        height: 160px !important;
+    }
+}
+
+@media only screen and (max-width: 800px) {
+    .THIS .custom-padding {
+        padding-bottom: 0.75rem !important;
+    }
+}
+
+.THIS .custom-error {
+    width: 100%;
+}
+
+.THIS .custom-icon svg {
+    width: 2rem;
+    height: 2rem;
+}
+
+.THIS .custom-align {
+    text-align: end;
+}
+
+.THIS.custom-position {
+    position: static;
+}
+
+.THIS .slds-popover {
+    width: 13rem;
+}
+
+.THIS .custom-height {
+    min-height: 400px;
+    max-height: 600px;
+    overflow-y: scroll;
+}
+
+@media only screen and (max-width: 800px) {
+    .THIS .custom-height {
+        min-height: 400px;
+        max-height: 400px;
+        overflow-y: scroll;
+    }
+}
+
+.THIS .slds-file-selector__dropzone {
+    border: none;
+    padding: none;
+}
+
+.THIS .slds-file-selector__text {
+    display: none;
+}
+
+.THIS .custom-fileupload .slds-form-element__label {
+    display: none;
+}

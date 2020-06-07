@@ -1,0 +1,163 @@
+<!--
+* 
+* @ Name 	:	SD_CmpSelectTable
+* @ Purpose : 	Component for downloading all Attachments from one place
+* @ Author	: 	Pradeep Chary
+*
+*   Date	        |  Developer Name               |  Version      |  Changes
+* ======================================================================================================
+*   16-04-2020      |  pradeep.chary@absyz.com		|  1.0          |  Initial Version
+*   
+-->
+
+<aura:component access="global" controller="SD_ClassDownloadAll" 
+                implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId,force:hasSObjectName,forceCommunity:availableForAllPageTypes,force:lightningQuickAction" >
+    
+    <!-- Static resource JSZIP is included -->
+    <ltng:require scripts="/resource/SD_JSZIP/SD_JSZIP/jszip.min.js" />
+    
+    <!-- Attributes to display error messages and warnings -->
+    <aura:attribute name="stErrorMessage" type="String" />
+    <aura:attribute name="bError" type="Boolean" default="false" />
+    <aura:attribute name="bWarning" type="Boolean" default="false" />
+    
+    <!-- To toggle spinner -->
+    <aura:attribute name="bSpinner" type="Boolean" default="false" />
+    
+    <!-- Attributes for Data table -->
+    <aura:attribute name="backupData" type="Object[]" />
+    <aura:attribute name="data" type="Object[]" />
+    <aura:attribute name="selectedData" type="Object[]" />
+    <aura:attribute name="columns" type="List" />
+    <aura:attribute name="sortedDirection" type="String" default="asc" />
+    <aura:attribute name="defaultSortDirection" type="String" default="asc" />
+    <aura:attribute name="sortedBy" type="String" />
+    
+    <!-- Attributes for Lightning Data Service -->
+    <aura:attribute name="currentRecord" type="Object" />
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="sObjectName" type="String" />
+    
+    <!-- Attribute Map with Key as Id and Value as Version data -->
+    <aura:attribute name="fileBodyMap" type="Map" />
+    <aura:attribute name="icons" type="Object[]" default="[]" />
+    
+    <!-- Attributes to display details and actions -->
+    <aura:attribute name="title" type="String" default="Smart Download" />
+    <aura:attribute name="iconName" type="String" default="standard:document" />
+    <aura:attribute name="buttonLabel" type="String" default="Download As Zip" />
+    <aura:attribute name="buttonLabelv2" type="String" default="Download" />
+    <aura:attribute name="bDirect" type="Boolean" default="false" />
+    <aura:attribute name="bDisabled" type="Boolean" default="true" />
+    <aura:attribute name="bLoad" type="Boolean" default="false" />
+    <aura:attribute name="bEnableTable" type="Boolean" default="false" />
+    
+    <!-- Event handlers-->
+    <aura:handler name="init" value="{! this }" action="{! c.init }"/>
+    <aura:handler name="change" value="{! v.bDirect }" action="{! c.handleClickv4 }"/>
+    
+    <!-- To display Spinner when loading -->
+    <aura:if isTrue="{!v.bSpinner}">
+        <lightning:spinner alternativeText="Loading" size="medium" variant="brand" class="custom-position" />
+    </aura:if>
+    
+    <!-- Lightning Data service for the current record -->
+    <force:recordData aura:id="recordLoader"
+                      recordId="{!v.recordId}"
+                      fields="Name"
+                      targetFields="{!v.currentRecord}"
+                      mode="VIEW"
+                      />
+    
+    <!-- Page Markup -->
+    <div class="slds-theme_default">
+        <!-- Page Header -->
+        <lightning:layout horizontalAlign="spread" verticalAlign="center" class="slds-page-header" multipleRows="true">
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="4" largeDeviceSize="3" class="custom-padding">
+                <lightning:layout horizontalAlign="start" verticalAlign="center">
+                    <lightning:layoutItem>
+                        <!-- Page Icon -->
+                        <lightning:icon iconName="{!v.iconName}" alternativeText="{!v.title}" title="{!v.title}" />
+                    </lightning:layoutItem>
+                    <lightning:layoutItem padding="horizontal-small">
+                        <h1>
+                            <!-- Page Title -->
+                            <span class="slds-page-header__title slds-truncate" title="{!v.title}">{!v.title}</span>
+                        </h1>
+                        <!-- Pop over to show the warnings -->
+                        <aura:if isTrue="{!v.bWarning}">
+                            <div class="slds-media slds-media_center slds-has-flexi-truncate slds-popover_warning">
+                                <div class="slds-media__body">
+                                    <p class="slds-page-header__name-meta">Please Select a record</p>
+                                </div>
+                                <div class="slds-media__figure">
+                                    <lightning:icon iconName="utility:warning" size="small" alternativeText="Warning!" title="Warning" variant="warning" />
+                                </div>
+                            </div>
+                        </aura:if>
+                    </lightning:layoutItem>
+                </lightning:layout>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="8" largeDeviceSize="6" class="custom-align custom-padding">
+                <lightning:buttonGroup>
+                    <aura:iteration items="{!v.icons}" var="icon">
+                        <lightning:button label="{!icon.name}" iconName="{!icon.icon}" iconPosition="left" variant="{!icon.variant}" onclick="{! c.handleTypeFilter }" />
+                    </aura:iteration>
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.updateToDefault }"
+                                          variant="neutral"
+                                          alternativeText="Close" />
+                </lightning:buttonGroup>
+            </lightning:layoutItem>
+            <lightning:layoutItem size="12" smallDeviceSize="12" mediumDeviceSize="4" largeDeviceSize="3" class="custom-align custom-padding">
+                
+                <!-- Page Buttons -->
+                <lightning:buttonGroup>
+                    <lightning:button label="{!v.buttonLabelv2}" title="{!v.buttonLabelv2}" onclick="{! c.handleClickv3 }" disabled="{!v.bDisabled}" />
+                    <aura:if isTrue="{!v.bLoad}">
+                        <lightning:button label="{!v.buttonLabel}" title="{!v.buttonLabel}" onclick="{! c.handleClickv2 }" disabled="{!v.bDisabled}" />
+                        <aura:set attribute="else">
+                            <lightning:button label="{!v.buttonLabel}" title="{!v.buttonLabel}" onclick="{! c.handleClick }" disabled="{!v.bDisabled}" />
+                        </aura:set>
+                    </aura:if>
+                    <lightning:buttonMenu alternativeText="Show menu" onselect="{! c.handleMenuSelect }">>
+                        <lightning:menuItem value="Upload" label="Upload" />
+                    </lightning:buttonMenu>
+                </lightning:buttonGroup>
+            </lightning:layoutItem>
+        </lightning:layout>
+        
+        <!-- To display Error message if any -->
+        <aura:if isTrue="{!v.bError}">
+            <div aura:id="alert-id">
+                <div class="slds-notify_alert slds-theme_alert-texture slds-theme_error" role="alert"> 
+                    <lightning:layout horizontalAlign="start" verticalAlign="center" multipleRows="false" class="custom-error">    
+                        <lightning:layoutItem smallDeviceSize="1" mediumDeviceSize="1" largeDeviceSize="1" size="12">
+                            <lightning:icon iconName="utility:error" variant="inverse" alternativeText="error" size="small" />
+                        </lightning:layoutItem>
+                        <lightning:layoutItem smallDeviceSize="11" mediumDeviceSize="11" largeDeviceSize="11" size="12">
+                            <h2>ERROR: {!v.stErrorMessage}</h2>
+                        </lightning:layoutItem>
+                    </lightning:layout>
+                </div>
+            </div>
+        </aura:if>
+        
+        <!-- Main Table component to display the records to select -->
+        <div class="slds-p-bottom_medium custom-height">
+            <aura:if isTrue="{!v.bEnableTable}">
+                <lightning:datatable keyField="id"
+                                     data="{! v.data }"
+                                     columns="{! v.columns }"
+                                     hideCheckboxColumn="false"
+                                     sortedBy="{! v.sortedBy }"
+                                     sortedDirection="{! v.sortedDirection }"
+                                     defaultSortDirection="{! v.defaultSortDirection }" 
+                                     onsort="{! c.updateColumnSorting }"
+                                     onrowaction="{! c.handleRowAction }" 
+                                     onrowselection="{! c.handleRowSelection }" />
+            </aura:if>
+        </div>
+    </div>
+    
+</aura:component>

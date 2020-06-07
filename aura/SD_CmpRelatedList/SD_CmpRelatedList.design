@@ -1,0 +1,17 @@
+<design:component>
+    <design:attribute name="title" label="Related List Label" default="Smart Download" />
+    <design:attribute name="iconName" label="Related List Icon" default="standard:document"
+                      description="Please enter icon name in the same format as in default" />
+    <design:attribute name="buttonLabel" label="Button Label for Direct Download" default="Download All" 
+                      description="Button is used to download all files without selecting" />
+    <design:attribute name="bEnableDownloadAll" label="Button Label to Select" default="true"
+                      description="Check for enabling Download All button" />
+    <design:attribute name="buttonLabelv2" label="Button Label to Select" default="Select"
+                      description="Button is used to select files" />
+    <design:attribute name="bEnableSelect" label="Button Label to Select" default="true"
+                      description="Check for enabling Select button" />
+    <design:attribute name="bEnableFilter" label="Content Type Filter" default="true"
+                      description="Filter based on Content type like IMG, PDF, PPT" />
+    <design:attribute name="stCommunity" label="Community Name" default=""
+                      description="If the component is placed in a community, then please enter the community name as it is URL" />
+</design:component>
