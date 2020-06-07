@@ -6,6 +6,11 @@
         <name>ApexClass</name>
     </types>
     <types>
+        <members>ForgotPassword</members>
+        <members>ForgotPasswordConfirm</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
         <members>SD_CmpChild</members>
         <members>SD_CmpDownloadAll</members>
         <members>SD_CmpRelatedList</members>
