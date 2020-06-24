@@ -1,0 +1,14 @@
+<!--
+* 
+* @ Name		:  TestCmp
+* @ Purpose		:  This class is used test metadata components.
+* @ Author		:  pradeep chary
+*
+*   Date            |  Developer Name               |  Version      |  Changes
+* ===============================================================================================================
+*   11-Jun-2020     |  pradeep.chary@absyz.com		|  1.0          |  Initial Version
+-->
+
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes" access="global" >
+	
+</aura:component>
